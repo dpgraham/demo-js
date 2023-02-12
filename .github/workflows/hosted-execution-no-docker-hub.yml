@@ -20,6 +20,8 @@ jobs:
       #   run: |
       #     cd webdriverio/webdriver/best-practices
       #     npm ci
+      - name: Archive test files
+        run: zip -r files.zip ./webdriverio/webdriver/best-practices
       - name: Push artifacts to Sauce Storage
         run: saucectl storage upload files.zip > sauce-storage-output.txt
       - name: Parse storage ID from sauce-storage-output.txt
