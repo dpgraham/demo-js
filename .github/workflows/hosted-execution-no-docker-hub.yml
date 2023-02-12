@@ -28,13 +28,11 @@ jobs:
         run: saucectl storage upload files.zip > sauce-storage-output.txt
       # This is hacky. Would be good to have this built into sauce storage
       - name: Parse storage ID from sauce-storage-output.txt
-        outputs:
-          storage_id: ${{ env.ARTIFACT_ID }}
         run: |
           cat sauce-storage-output.txt
           echo "ARTIFACT_ID=$(cat sauce-storage-output.txt | grep -oP 'The ID of your file is \K.*')" >> $GITHUB_ENV
       - name: Confirm ARTIFACT_ID is correct
-        run: echo $ARTIFACT_ID
+        run: echo ${{ env.ARTIFACT_ID }}
 
 
   # run-tests:
