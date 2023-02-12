@@ -51,13 +51,16 @@ jobs:
       SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
       SAUCE_REGION: us-west-1
       STORAGE_ID: ${{ needs.retain-files.outputs.storage_id }}
-      DOCKER_TAG: node:18 # TODO: Can be changed to just "node:18" when saucectl works without config file
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_TAG: node:18
     strategy:
       fail-fast: false
       matrix:
         entrypoint: [
           "sh -c '\
             curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY https://api.$SAUCE_REGION.saucelabs.com/v1/storage/download/$STORAGE_ID --output test-files.zip;\
+            unzip test-files.zip;\
             npm ci;\
             npm run test.saucelabs.us;\
           '"
