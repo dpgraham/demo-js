@@ -1,0 +1,50 @@
+name: Hosted Execution
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  push_to_registry:
+    name: Get test files and dependencies
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.meta.outputs.tags }}
+      label: ${{ steps.meta.outputs.labels }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          cd webdriverio/webdriver/best-practices
+          npm ci
+      - name: Retain artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-files
+          path: webdriverio/webdriver/best-practices
+
+  # run-tests:
+  #   name: Run Tests in Sauce Labs hosted execution environment
+  #   needs: push_to_registry
+  #   runs-on: ubuntu-latest
+  #   container: saucelabs/saucectl:latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       entrypoint: [
+  #         "sh -c 'cd appium-web/best-practices; npm run test.saucelabs.android.us'",
+  #         "sh -c 'cd webdriver/best-practices; npm run test.saucelabs.us'"
+  #       ]
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Run tests
+  #     env:
+  #       SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+  #       SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+  #       DOCKER_USERNAME: danielpatrickgraham # TODO: Unhardcode this when merge to saucelabs-training
+  #       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  #       DOCKER_TAG: ${{ needs.push_to_registry.outputs.tag }}
+  #       ENTRYPOINT: ${{ matrix.entrypoint }}
+  #     run: saucectl run
+
