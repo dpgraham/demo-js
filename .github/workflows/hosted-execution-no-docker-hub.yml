@@ -14,6 +14,8 @@ jobs:
       SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
       SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
       SAUCE_REGION: us-west-1
+    outputs:
+      storage_id: ${{ env.STORAGE_ID }}
     steps:
       - uses: actions/checkout@v2
       # - name: Install dependencies
@@ -39,34 +41,27 @@ jobs:
           ls -la
 
 
-  # run-tests:
-  #   name: Run Tests in Sauce Labs hosted execution environment
-  #   needs: retain-files
-  #   runs-on: ubuntu-latest
-  #   container: saucelabs/saucectl:latest
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       entrypoint: [
-  #         "sh -c '
-  #           wget $TEST_FILES;\
-  #           npm ci;\
-  #           npm run test.saucelabs.us;\
-  #           curl \
-  #             -H 'Accept: application/vnd.github+json' \
-  #             -H 'Authorization: Bearer $GITHUB_TOKEN' \
-  #             -H 'X-GitHub-Api-Version: 2022-11-28' \
-  #             https://api.github.com/repos/dpgraham/demo-js/actions/artifacts/ARTIFACT_ID/ARCHIVE_FORMAT; \
-  #         '",
-  #       ]
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - run: echo $GITHUB_TOKEN
-  #     - name: Download test files
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: test-files
-  #         path: webdriverio/webdriver/best-practices
-  #     - name: List test files
-  #       run: ls -la webdriverio/webdriver/best-practices
+  run-tests:
+    name: Run Tests in Sauce Labs hosted execution environment
+    needs: retain-files
+    runs-on: ubuntu-latest
+    container: saucelabs/saucectl:latest
+    env:
+      SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+      SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+      SAUCE_REGION: us-west-1
+      STORAGE_ID: ${{ needs.retain-files.outputs.storage_id }}
+      DOCKER_TAG: node:18
+    strategy:
+      fail-fast: false
+      matrix:
+        entrypoint: [
+          "sh -c '
+            curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY https://api.$SAUCE_REGION.saucelabs.com/v1/storage/download/$STORAGE_ID --output test-files.zip;\
+            npm ci;\
+            npm run test.saucelabs.us;\
+          '"
+        ]
+    steps:
+      - saucectl run
 
