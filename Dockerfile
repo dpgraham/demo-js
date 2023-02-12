@@ -1,5 +1,3 @@
-FROM node:10
-WORKDIR /demo-js
-COPY . /demo-js
-RUN npm install
-EXPOSE 8081
+FROM node:18
+WORKDIR /app
+COPY .sauce/config.yml ./.sauce/config.yml
