@@ -54,7 +54,7 @@ jobs:
       fail-fast: false
       matrix:
         entrypoint: [
-          "sh -c 'curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY https://api.$SAUCE_REGION.saucelabs.com/v1/storage/download/$STORAGE_ID --output test-files.zip; unzip test-files.zip; npm ci; npm run test.saucelabs.us;'"
+          "sh -c 'wget https://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@api.us-west-1.saucelabs.com/v1/storage/download/$STORAGE_ID -O files.zip; unzip files.zip; npm ci; npm run test.saucelabs.us;'"
         ]
     steps:
       - uses: actions/checkout@v2
