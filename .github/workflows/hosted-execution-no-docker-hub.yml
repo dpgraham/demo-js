@@ -34,7 +34,6 @@ jobs:
       - name: Confirm STORAGE_ID is correct
         run: |
           curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY https://api.$SAUCE_REGION.saucelabs.com/v1/storage/$STORAGE_ID --output test-files.zip
-          unzip test-files.zip
           ls -la
 
 
