@@ -12,14 +12,14 @@ jobs:
     outputs:
       tag: ${{ steps.meta.outputs.tags }}
       label: ${{ steps.meta.outputs.labels }}
+      artifact_id: ${{ steps.meta.outputs.artifact_id }}
     steps:
       - uses: actions/checkout@v2
       # - name: Install dependencies
       #   run: |
       #     cd webdriverio/webdriver/best-practices
       #     npm ci
-      - name: Retain artifacts
-        uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v2
         with:
           name: test-files
           path: webdriverio/webdriver/best-practices
@@ -39,13 +39,14 @@ jobs:
             npm run test.saucelabs.us;\
             curl \
               -H 'Accept: application/vnd.github+json' \
-              -H 'Authorization: Bearer <YOUR-TOKEN>' \
+              -H 'Authorization: Bearer $GITHUB_TOKEN' \
               -H 'X-GitHub-Api-Version: 2022-11-28' \
-              https://api.github.com/repos/OWNER/REPO/actions/artifacts/ARTIFACT_ID/ARCHIVE_FORMAT; \
+              https://api.github.com/repos/dpgraham/demo-js/actions/artifacts/ARTIFACT_ID/ARCHIVE_FORMAT; \
           '",
         ]
     steps:
       - uses: actions/checkout@v2
+      - run: echo $GITHUB_TOKEN
       - name: Download test files
         uses: actions/download-artifact@v2
         with:
