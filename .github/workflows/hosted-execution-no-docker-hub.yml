@@ -45,7 +45,7 @@ jobs:
       fail-fast: false
       matrix:
         entrypoint: [
-          "sh -c 'wget https://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@api.us-west-1.saucelabs.com/v1/storage/download/$STORAGE_ID -O files.zip; unzip files.zip; cd webdriver/best-practices; npm ci; npm run test.saucelabs.us;'"
+          "sh -c 'wget https://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@api.us-west-1.saucelabs.com/v1/storage/download/$STORAGE_ID -O files.zip; unzip files.zip; cd webdriver/best-practices; npm ci; npm run test.saucelabs.us;'",
           "sh -c 'wget https://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@api.us-west-1.saucelabs.com/v1/storage/download/$STORAGE_ID -O files.zip; unzip files.zip; cd appium-web/best-practices; npm ci; npm run test.saucelabs.us;'"
         ]
     steps:
