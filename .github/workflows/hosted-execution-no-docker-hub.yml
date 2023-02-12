@@ -51,7 +51,7 @@ jobs:
       SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
       SAUCE_REGION: us-west-1
       STORAGE_ID: ${{ needs.retain-files.outputs.storage_id }}
-      DOCKER_TAG: danielpatrickgraham/node:18 # TODO: Can be changed to just "node:18" when saucectl works without config file
+      DOCKER_TAG: node:18 # TODO: Can be changed to just "node:18" when saucectl works without config file
     strategy:
       fail-fast: false
       matrix:
@@ -63,5 +63,6 @@ jobs:
           '"
         ]
     steps:
+      - uses: actions/checkout@v2
       - run: saucectl run
 
