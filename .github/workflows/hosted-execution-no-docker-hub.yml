@@ -9,7 +9,6 @@ jobs:
   retain-files:
     name: Get test files and dependencies
     runs-on: ubuntu-latest
-    #container: saucelabs/saucectl:latest
     env:
       SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
       SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
@@ -18,18 +17,10 @@ jobs:
       storage_id: ${{ env.STORAGE_ID }}
     steps:
       - uses: actions/checkout@v2
-      # - name: Install dependencies
-      #   run: |
-      #     cd webdriverio/webdriver/best-practices
-      #     npm ci
       - name: Install Saucectl
         run: npm install -g saucectl
       - name: Archive test files
-        run: |
-          pushd webdriverio/webdriver/best-practices
-          zip -r files.zip .
-          popd
-          mv webdriverio/webdriver/best-practices/files.zip .
+        run: zip -r files.zip .
       - name: Push artifacts to Sauce Storage
         run: saucectl storage upload files.zip &> sauce-storage-output.log
       # This is hacky. Would be good to have this built into sauce storage
@@ -54,12 +45,14 @@ jobs:
       fail-fast: false
       matrix:
         entrypoint: [
-          "sh -c 'wget https://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@api.us-west-1.saucelabs.com/v1/storage/download/$STORAGE_ID -O files.zip; unzip files.zip; npm ci; npm run test.saucelabs.us;'"
+          "sh -c 'wget https://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@api.us-west-1.saucelabs.com/v1/storage/download/$STORAGE_ID -O files.zip; unzip files.zip; cd webdriver/best-practices;  npm ci; npm run test.saucelabs.us;'"
+          "sh -c 'wget https://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@api.us-west-1.saucelabs.com/v1/storage/download/$STORAGE_ID -O files.zip; unzip files.zip; cd appium-web/best-practices;  npm ci; npm run test.saucelabs.us;'"
         ]
     steps:
       - uses: actions/checkout@v2
       - run: saucectl run
         env:
-          ENTRYPOINT: ${{ matrix.entrypoint }}
+          ENTRYPOINT: "sh -c 'wget https://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@api.us-west-1.saucelabs.com/v1/storage/download/$STORAGE_ID\ 
+            "-O files.zip; unzip files.zip; npm ci; npm run test.saucelabs.us;'"
 
 
