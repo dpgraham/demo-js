@@ -26,11 +26,16 @@ jobs:
         run: zip -r files.zip ./webdriverio/webdriver/best-practices
       - name: Push artifacts to Sauce Storage
         run: saucectl storage upload files.zip > sauce-storage-output.txt
+      # This is hacky. Would be good to have this built into sauce storage
       - name: Parse storage ID from sauce-storage-output.txt
+        outputs:
+          storage_id: ${{ env.ARTIFACT_ID }}
         run: |
           cat sauce-storage-output.txt
           echo "ARTIFACT_ID=$(cat sauce-storage-output.txt | grep -oP 'The ID of your file is \K.*')" >> $GITHUB_ENV
-          echo $GITHUB_ENV
+      - name: Confirm ARTIFACT_ID is correct
+        run: echo $ARTIFACT_ID
+
 
   # run-tests:
   #   name: Run Tests in Sauce Labs hosted execution environment
