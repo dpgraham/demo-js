@@ -29,7 +29,8 @@ jobs:
       # This is hacky. Would be good to have this built into sauce storage
       - name: Parse storage ID from sauce-storage-output.log
         run: |
-          echo "ARTIFACT_ID=$(cat sauce-storage-output.log | grep -oP 'The ID of your file is \K.*'" >> $GITHUB_ENV
+          cat sauce-storage-output.log
+          echo "ARTIFACT_ID=$(cat sauce-storage-output.log | grep -oP 'The ID of your file is \K.*')" >> $GITHUB_ENV
       - name: Confirm ARTIFACT_ID is correct
         run: echo ${{ env.ARTIFACT_ID }}
 
