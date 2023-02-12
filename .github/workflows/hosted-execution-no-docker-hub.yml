@@ -30,9 +30,12 @@ jobs:
       - name: Parse storage ID from sauce-storage-output.log
         run: |
           cat sauce-storage-output.log
-          echo "ARTIFACT_ID=$(cat sauce-storage-output.log | grep -oP 'The ID of your file is \K.*')" >> $GITHUB_ENV
-      - name: Confirm ARTIFACT_ID is correct
-        run: echo ${{ env.ARTIFACT_ID }}
+          echo "STORAGE_ID=$(cat sauce-storage-output.log | grep -oP 'The ID of your file is \K.*')" >> $GITHUB_ENV
+      - name: Confirm STORAGE_ID is correct
+        run: |
+          curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY https://api.$SAUCE_REGION.saucelabs.com/v1/storage/$STORAGE_ID --output test-files.zip
+          unzip test-files.zip
+          ls -la
 
 
   # run-tests:
