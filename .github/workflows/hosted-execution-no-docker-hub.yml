@@ -20,7 +20,7 @@ jobs:
       - name: Install Saucectl
         run: npm install -g saucectl
       - name: Archive test files
-        run: zip -r files.zip . -x "**test-apps/*" ".git/*" "**node_modules/* 
+        run: zip -r files.zip . -x "**test-apps/*" ".git/*" "**node_modules/*"
       - name: Push artifacts to Sauce Storage
         run: saucectl storage upload files.zip &> sauce-storage-output.log
       # This is hacky. Would be good to have this built into sauce storage
