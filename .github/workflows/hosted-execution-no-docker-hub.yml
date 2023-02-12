@@ -7,7 +7,7 @@ on:
 
 jobs:
   retain-files:
-    name: Get test files and dependencies
+    name: Upload Test Files to Sauce Storage
     runs-on: ubuntu-latest
     env:
       SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
