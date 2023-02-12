@@ -35,7 +35,7 @@ jobs:
         env:
           STORAGE_ID: ${{ env.STORAGE_ID }}
         run: |
-          curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY https://api.$SAUCE_REGION.saucelabs.com/v1/storage/$STORAGE_ID --output test-files.zip
+          curl -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY https://api.$SAUCE_REGION.saucelabs.com/v1/storage/download/$STORAGE_ID --output test-files.zip
           ls -la
 
 
