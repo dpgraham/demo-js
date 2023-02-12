@@ -1,0 +1,57 @@
+name: Hosted Execution sans Docker Image
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  retain-files:
+    name: Upload Test Files to Sauce Storage
+    runs-on: ubuntu-latest
+    env:
+      SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+      SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+      SAUCE_REGION: us-west-1
+    outputs:
+      storage_id: ${{ env.STORAGE_ID }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Saucectl
+        run: npm install -g saucectl
+      - name: Archive test files
+        run: zip -r files.zip . -x "**test-apps/*" ".git/*" "**node_modules/*"
+      - name: Push artifacts to Sauce Storage
+        run: saucectl storage upload files.zip &> sauce-storage-output.log
+      # This is hacky. Would be good to have this built into sauce storage
+      - name: Parse storage ID from sauce-storage-output.log
+        run: echo "STORAGE_ID=$(cat sauce-storage-output.log | grep -oP 'The ID of your file is \K.*')" >> $GITHUB_ENV
+
+
+  run-tests:
+    name: Run Tests in Sauce Labs hosted execution environment
+    needs: retain-files
+    runs-on: ubuntu-latest
+    container: saucelabs/saucectl:latest
+    env:
+      SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+      SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
+      SAUCE_REGION: us-west-1
+      STORAGE_ID: ${{ needs.retain-files.outputs.storage_id }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      DOCKER_TAG: node:18
+    strategy:
+      fail-fast: false
+      matrix:
+        entrypoint: [
+          "sh -c 'wget https://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@api.us-west-1.saucelabs.com/v1/storage/download/$STORAGE_ID -O files.zip; unzip files.zip; cd webdriverio/webdriver/best-practices; npm ci; npm run test.saucelabs.us;'",
+          "sh -c 'wget https://$SAUCE_USERNAME:$SAUCE_ACCESS_KEY@api.us-west-1.saucelabs.com/v1/storage/download/$STORAGE_ID -O files.zip; unzip files.zip; cd webdriverio/appium-web/best-practices; npm ci; npm run test.saucelabs.android.us;'"
+        ]
+    steps:
+      - uses: actions/checkout@v2
+      - run: saucectl run
+        env:
+          ENTRYPOINT: ${{ matrix.entrypoint }}
+
+
