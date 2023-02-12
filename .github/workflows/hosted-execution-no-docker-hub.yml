@@ -59,4 +59,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: saucectl run
+        env:
+          ENTRYPOINT: ${{ matrix.entrypoint }}
+
 
