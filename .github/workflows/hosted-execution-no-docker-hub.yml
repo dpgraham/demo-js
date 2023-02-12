@@ -9,7 +9,7 @@ jobs:
   retain-files:
     name: Get test files and dependencies
     runs-on: ubuntu-latest
-    container: saucelabs/saucectl:latest
+    #container: saucelabs/saucectl:latest
     env:
       SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
       SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
