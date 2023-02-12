@@ -44,10 +44,13 @@ jobs:
               https://api.github.com/repos/OWNER/REPO/actions/artifacts/ARTIFACT_ID/ARCHIVE_FORMAT; \
           '",
         ]
-    # steps:
-    # - uses: actions/checkout@v2
-    # - name: Run Saucectl
-    #   run:
-    #     - echo "PLACEHOLDER"
-    #     - echo ${{ matrix.entrypoint }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download test files
+        uses: actions/download-artifact@v2
+        with:
+          name: test-files
+          path: webdriverio/webdriver/best-practices
+      - name: List test files
+        run: ls -la webdriverio/webdriver/best-practices
 
