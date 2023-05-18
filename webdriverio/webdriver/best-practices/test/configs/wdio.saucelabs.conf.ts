@@ -98,6 +98,7 @@ if (process.env.GITPOD_WORKSPACE_ID) {
     browserVersion: process.env.BROWSER_VERSION || 'latest',
     'sauce:options': {
       build: `Gitpod: ${process.env.BUILD}` || 'Gitpod build',
+      tags: ['Gitpod'],
     },
   }];
 }
